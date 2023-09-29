@@ -1,0 +1,41 @@
+<h1 mat-dialog-title>{{titleAction}} Book Form</h1>>
+<div mat-dialog-content>
+    <form [formGroup]="bookForm">
+
+    <mat-form-field appearance="fill">
+        <mat-label>Title</mat-label>
+        <input formControlName="title" matInput placeholder="Book Title"> 
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+        <mat-label>Description</mat-label>
+        <input formControlName="description" matInput placeholder="Book Description">
+    </mat-form-field> 
+
+    <mat-label>Chose a Picture</mat-label>
+    <input formControlName="pictureUrl" type="file" class="file-input"
+        (change)="onFileSelected($event)" #fileUpload>
+    
+    <div class="file-upload">
+        {{fileName || "No file uploaded yet."}}
+    
+        <button mat-mini-fab color="primary" class="upload-btn"
+          (click)="fileUpload.click()">
+             <mat-icon>attach_file</mat-icon>
+        </button>
+     </div>
+    
+     <mat-form-field>
+      <mat-label>Chose Authors</mat-label>
+      <mat-select formControlName="authors" [formControl]="author" multiple ngDefaultControl>
+        <mat-option *ngFor="let author of authors" [value]="author" (onSelectionChange)="getValues($event)" required>{{author.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    </form>
+      <p> Selected author: {{selectedAuthors}} </p>
+</div>
+<div mat-dialog-actions [align]="'end'">
+    <button mat-raised-button color="warn" mat-dialog-close="">Cancel</button>
+    <button mat-raised-button color="primary" (click)="addBook()">Save</button>
+</div>
