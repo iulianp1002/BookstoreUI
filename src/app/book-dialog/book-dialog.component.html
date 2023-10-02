@@ -11,29 +11,54 @@
         <mat-label>Description</mat-label>
         <input formControlName="description" matInput placeholder="Book Description">
     </mat-form-field> 
+    <mat-form-field>
+      <div>
+        <mat-toolbar>
+          <input matInput [value]="selectedFileNames.length ? selectedFileNames.join(', ') : 'Select Images'" />
+    
+          <button
+            mat-flat-button
+            color="primary"
+            [disabled]="!selectedFiles"
+            (click)="uploadFiles()"
+          >
+            Upload
+            <mat-icon>attach_file</mat-icon>
+          </button>
+        </mat-toolbar>
+    
+        <input
+          type="file"
+          id="fileInput"
+          name="fileInput"
+          accept="image/*" multiple 
+          (change)="selectFiles($event)"
+        />
+      </div>
+    </mat-form-field>
+    
+    <div>
+      <img *ngFor='let preview of previews' [src]="preview" class="preview" style="width:50px;height:50px;">
+    </div>
 
-    <mat-label>Chose a Picture</mat-label>
-    <input formControlName="pictureUrl" type="file" class="file-input"
-        (change)="onFileSelected($event)" #fileUpload>
+    <div *ngIf="message.length" class="message">
+      <ul *ngFor="let msg of message; let i = index">
+        <li>{{ msg }}</li>
+      </ul>
+    </div>
+
+
     
-    <div class="file-upload">
-        {{fileName || "No file uploaded yet."}}
-    
-        <button mat-mini-fab color="primary" class="upload-btn"
-          (click)="fileUpload.click()">
-             <mat-icon>attach_file</mat-icon>
-        </button>
-     </div>
     
      <mat-form-field>
       <mat-label>Chose Authors</mat-label>
-      <mat-select formControlName="authors" [formControl]="author" multiple ngDefaultControl>
-        <mat-option *ngFor="let author of authors" [value]="author" (onSelectionChange)="getValues($event)" required>{{author.name}}</mat-option>
+      <mat-select [ngModel]="selectedVal"  formControlName="authors" [formControl]="author" multiple ngDefaultControl (ngModelChane)="selectedVal">
+        <mat-option *ngFor="let author of authors" [value]="author.id" (onSelectionChange)="getValues($event)" required>{{author.name}}</mat-option>
       </mat-select>
     </mat-form-field>
 
     </form>
-      <p> Selected author: {{selectedAuthors}} </p>
+    
 </div>
 <div mat-dialog-actions [align]="'end'">
     <button mat-raised-button color="warn" mat-dialog-close="">Cancel</button>

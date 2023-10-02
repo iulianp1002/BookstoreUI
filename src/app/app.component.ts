@@ -33,6 +33,7 @@ constructor (private dialog: MatDialog,
   ngOnInit(): void {
     this.getAllBooksWithAuthors();
   }
+  
   openDialogBook() {
     this.dialog.open(BookDialogComponent, {
       width:'30%'
@@ -55,7 +56,7 @@ constructor (private dialog: MatDialog,
 
   getAllBooksWithAuthors() {
     this.bookService.getBooksWithAuthors().subscribe({
-      next:(res: BookWithAuthors[] | undefined)=>{
+      next:(res: BookWithAuthors[] )=>{
         this.dataSource = new MatTableDataSource(res);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;

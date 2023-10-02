@@ -27,4 +27,6 @@ private url = "File";
   getFiles(): Observable<any> {
     return this.http.get(`${environment.apiURL}${this.url}/files`);
   }
+
+
 }
