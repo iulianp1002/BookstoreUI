@@ -25,3 +25,11 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+NOTE:
+ - npm install will install most of the dependencies 
+ aplication was developed based on latest versions  of the followings:
+Angular CLI: 16.2.3
+Node: 18.12.1
+Package Manager: npm 8.19.2
+OS: win32 x64
