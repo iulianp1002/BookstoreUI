@@ -42,4 +42,10 @@ export class BookService {
   public getBook(bookId: number): Observable<number>{
     return this.http.get<number>(`${environment.apiURL}/${this.url}/${bookId}`)
   }
+
+  public getCompanyLogoBase(pictureNume: string): any {
+    const url = 'https://localhost:7268/Resources/Images/'+pictureNume;
+
+    return this.http.get(url);
+}
 }

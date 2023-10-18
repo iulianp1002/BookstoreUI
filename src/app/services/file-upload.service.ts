@@ -15,13 +15,14 @@ private url = "File";
     const formData: FormData = new FormData();
 
     formData.append('file', file);
-
-    const req = new HttpRequest('POST', `${environment.apiURL}/${this.url}/upload`, formData, {
+console.log('to the upload...')
+    const req = new HttpRequest('POST', `${environment.apiURL}/File/Upload`, formData, {
       reportProgress: true,
       responseType: 'json'
     });
-
-    return this.http.request(req);
+    const req1 = new HttpRequest('POST', `${environment.apiURL}/File/Upload`, formData);
+req1.headers.set("Content-Type","multipart/form-data");
+    return this.http.request(req1);
   }
 
   getFiles(): Observable<any> {

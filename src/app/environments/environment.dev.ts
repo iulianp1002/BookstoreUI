@@ -4,5 +4,5 @@ export const environment = {
     appTitle: 'Bookstore',
     applicationDomain: 'localhost',
     apiURL: 'https://localhost:7268/api',
-    
+    webRootUrl:'https://localhost:7268'
 }

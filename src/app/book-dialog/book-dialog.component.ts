@@ -1,5 +1,5 @@
 import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Author } from '../models/author';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { BookService } from '../services/book.service';
@@ -8,6 +8,7 @@ import { AuthorService } from '../services/author.service';
 import { FileUploadService } from '../services/file-upload.service';
 import { AddBook } from '../models/AddBook';
 import { Observable } from 'rxjs';
+import { environment } from '../environments/environment.dev';
 
 
 @Component({
@@ -15,7 +16,7 @@ import { Observable } from 'rxjs';
   templateUrl: './book-dialog.component.html',
   styleUrls: ['./book-dialog.component.scss']
 })
-export class BookDialogComponent implements OnInit{
+export class BookDialogComponent implements OnInit, AfterViewInit{
   fileName = '';
   selectedValue ='';
   authors :Author[] =  [];
@@ -28,12 +29,16 @@ export class BookDialogComponent implements OnInit{
   selectedFiles?: FileList;
   selectedFileNames: string[] = [];
   selectedVal:any;
-  
+  selectedFile!: File;
+  response: { dbPath: ''; } | undefined;
+
   progressInfos: any[] = [];
   message: string[] = [];
 
   previews: string[] = [];
   imageInfos?: Observable<any>;
+  @ViewChild('fileInput')
+  myInput!: ElementRef;
   
   constructor (private http: HttpClient, 
                private formBuilder: FormBuilder,
@@ -42,13 +47,22 @@ export class BookDialogComponent implements OnInit{
                private fileUploadService:FileUploadService,
                private dialogRef: MatDialogRef<BookDialogComponent>,
                @Inject(MAT_DIALOG_DATA) public editBookData : AddBook){}
+  ngAfterViewInit(): void {
+    if(this.editBookData){
+    var fullPicturePath = 'https://localhost:7268/Resources/Images/'+this.editBookData.pictureUrl;console.log('editing picture:',fullPicturePath)
+    //this.myInput.nativeElement.value = fullPicturePath;
+    this.previews.push(fullPicturePath);
+    }
+  }
 
                selectFiles(event: any): void {
                 this.message = [];
                 this.progressInfos = [];
                 this.selectedFileNames = [];
                 this.selectedFiles = event.target.files;
-            
+                console.log('selected files::',this.selectedFiles)
+                this.selectedFile = event.target.files[0];
+
                 this.previews = [];
                 if (this.selectedFiles && this.selectedFiles[0]) {
                   const numberOfFiles = this.selectedFiles.length;
@@ -56,7 +70,7 @@ export class BookDialogComponent implements OnInit{
                     const reader = new FileReader();
             
                     reader.onload = (e: any) => {
-                      console.log(e.target.result);
+                     // console.log(e.target.result);
                       this.previews.push(e.target.result);
                     };
             
@@ -107,31 +121,15 @@ export class BookDialogComponent implements OnInit{
                 }
               }
 
-  onFileSelected(event:any) {
 
-    const file:File = event.target.files[0];
-
-    if (file) {
-
-        this.fileName = file.name;
-
-        const formData = new FormData();
-
-        formData.append("thumbnail", file);
-
-        const upload$ = this.fileUploadService.upload(file);
-
-        upload$.subscribe();
-    }
- }
 
  ngOnInit(): void {
 
 
   this.bookForm = this.formBuilder.group({
     title: ['',Validators.required],
-    description: ['',Validators.required],
-    pictureUrl:['',Validators.required],
+    description: [''],
+    pictureUrl:[''],
     authors:[[],Validators.required]
   })
 
@@ -144,13 +142,15 @@ export class BookDialogComponent implements OnInit{
   })
 
   if(this.editBookData){
-    
+    console.log('edit form:',this.editBookData)
     this.getAuthorIndexed(this.editBookData.authors);
     this.selectedVal = this.selectedAuthorIds;
     this.actionBtn='Update';
     this.titleAction='Update';
     this.bookForm.controls['title']?.setValue(this.editBookData.title);
     this.bookForm.controls['description']?.setValue(this.editBookData.description);
+
+    
     this.bookForm.controls['pictureUrl']?.setValue(this.editBookData.pictureUrl);
     this.bookForm.controls['authors'].setValue(this.editBookData.authors);
     this.bookForm.controls['Authors']?.setValue(this.editBookData?.AuthorIds);
@@ -167,7 +167,7 @@ export class BookDialogComponent implements OnInit{
       if (event.source.selected === true) {
         this.selectedAuthors.push(event.source.value)
       } else {
-        console.log(event.source.value)
+        //console.log(event.source.value)
       }
     }
   }
@@ -220,12 +220,12 @@ getAuthorList(authorids:number[]){
 }
 
  addBook(){
-  if(!this.editBookData){ 
-    if(this.bookForm.valid){
+  if(!this.editBookData){ console.log('inside add',this.selectedFile.name)
+    if(this.bookForm.valid){ console.log('ading',this.bookForm.value)
     var bookFormated = new AddBook();
-    bookFormated.title = this.bookForm.value.Title;
-    bookFormated.description = this.bookForm.value.Description;
-    bookFormated.pictureUrl = this.bookForm.value.PictureUrl;
+    bookFormated.title = this.bookForm.value.title;
+    bookFormated.description = this.bookForm.value.description;
+    bookFormated.pictureUrl = this.selectedFile.name;
     bookFormated.AuthorIds = this.getAuthorIdList(this.selectedAuthors);
    
       this.bookService.createBook(bookFormated).subscribe({
@@ -238,8 +238,10 @@ getAuthorList(authorids:number[]){
             console.log(err);
         }
       })
+    }else{
+      console.log('not valid form:',this.bookForm)
     }
-  }else{
+  }else{ console.log('inside edit')
     this.updateBook();
   }
  }
@@ -264,4 +266,6 @@ getAuthorList(authorids:number[]){
   })
  }
 
+
+ 
 }

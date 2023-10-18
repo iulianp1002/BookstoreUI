@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { FileUploadService } from '../services/file-upload.service';
-import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-file-upload',
@@ -18,11 +19,20 @@ export class FileUploadComponent implements OnInit {
   previews: string[] = [];
   imageInfos?: Observable<any>;
 
-  constructor(private uploadService: FileUploadService) { }
+
+  //code maze
+  public mess!: string;
+  public progress!: number;
+   public selectedFile!: File;
+
+  @Output() public onFileUploadFinished = new EventEmitter();
+  
+  constructor(private uploadService: FileUploadService,
+    private http: HttpClient) { }
 
 
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+    
   }
 
   selectFiles(event: any): void {
@@ -86,4 +96,28 @@ export class FileUploadComponent implements OnInit {
       }
     }
   }
+
+  public uploadFile = (event: any)=> {
+    
+    this.selectedFile = <File>event.target.files[0];
+    console.log('selected file:',this.selectedFile)
+      
+  }
+
+  public SaveFile(){
+    const formData = new FormData();
+    formData.append('file',this.selectedFile,this.selectedFile.name);
+    ///https://localhost:7268/api/File/Upload
+    this.http.post(environment.apiURL+'/File/Upload', formData, { reportProgress: true, observe:'events'})
+    .subscribe(event =>{
+    if(event.type === HttpEventType.UploadProgress) {
+        this.progress = Math.round(100*event.loaded / (event.total ?? 1));
+      }
+      else if(event.type === HttpEventType.Response)  {
+        this.mess ='Upload success.';
+        this.onFileUploadFinished.emit(event.body);
+      } 
+      });
+  }
 }
+

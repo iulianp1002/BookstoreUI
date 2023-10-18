@@ -3,7 +3,7 @@ import { BookDialogComponent } from './book-dialog/book-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthorDialogComponent } from './author/author-dialog.component';
 import { BookService } from './services/book.service';
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
@@ -11,6 +11,8 @@ import { AddBook } from './models/AddBook';
 import { AuthorService } from './services/author.service';
 import { Author } from './models/author';
 import { BookWithAuthors } from './models/BookWithAuthors';
+import { environment } from './environments/environment.dev';
+import { ɵDomRendererFactory2 } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-root',
@@ -24,10 +26,12 @@ export class AppComponent implements OnInit{
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild('smallPicture') imageControl: ElementRef<HTMLImageElement> | undefined;
 
 constructor (private dialog: MatDialog,
              private bookService: BookService,
-             private authorService: AuthorService){
+             private authorService: AuthorService,
+             private renderer:Renderer2){
 
 }
   ngOnInit(): void {
@@ -83,7 +87,7 @@ constructor (private dialog: MatDialog,
     }
   }
 
-  editBook(row: any) {
+  editBook(row: any) { console.log('editing row:',row);
     this.dialog.open(BookDialogComponent, {
       width:'30%',
       data: row
@@ -103,4 +107,13 @@ constructor (private dialog: MatDialog,
       }
     })
   }
+
+  createImgPath = (serverPath: string) => { 
+    return `${environment.webRootUrl}/Resources/Images/${serverPath}`;
+  }
+
+  showPicture =(event: any) =>{ console.log('test picture')
+    this.renderer.setProperty(this.imageControl?.nativeElement,'display',"block");
+
+    }
 }

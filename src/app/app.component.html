@@ -39,7 +39,10 @@
         <!-- Picture Column -->
         <ng-container matColumnDef="pictureUrl">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Picture </th>
-          <td mat-cell *matCellDef="let row"> {{row.pictureUrl}} </td>
+          <td mat-cell *matCellDef="let row"> 
+            <img id="smallPicture" [src]="createImgPath(row.pictureUrl)" alt="book picture" style="width:45px;height:60px;" title="{{row.pictureUrl}}" (mouseover)="showPicture($event)"/>
+            <div id="bigPicture"  style="display: none;"><img [src]="createImgPath(row.pictureUrl)"/></div>
+          </td>
         </ng-container>
     
         <!-- Authors Column -->
