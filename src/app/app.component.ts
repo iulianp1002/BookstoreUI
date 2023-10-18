@@ -23,6 +23,7 @@ export class AppComponent implements OnInit{
   title = 'Bookstore.UI';
   displayedColumns: string[] = ['title', 'description', 'pictureUrl', 'authors','action'];
   dataSource!: MatTableDataSource<BookWithAuthors>;
+  showImage: boolean = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -112,8 +113,8 @@ constructor (private dialog: MatDialog,
     return `${environment.webRootUrl}/Resources/Images/${serverPath}`;
   }
 
-  showPicture =(event: any) =>{ console.log('test picture')
-    this.renderer.setProperty(this.imageControl?.nativeElement,'display',"block");
-
+  showPicture =(show: boolean) =>{ console.log('test picture',this.imageControl)
+    //this.renderer.setProperty(this.imageControl?.nativeElement,'display',"block");
+    this.showImage = show;
     }
 }

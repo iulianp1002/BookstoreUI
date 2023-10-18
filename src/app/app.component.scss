@@ -28,3 +28,48 @@
   .tdButtons{
     min-width: 160px;
   }
+
+  * {
+    box-sizing: border-box;
+  }
+  
+  .column {
+    float: left;
+    width: 33.33%;
+    padding: 5px;
+  }
+  
+  /* Clearfix (clear floats) */
+  .row::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+
+  .image-container {
+    position: relative;
+    width: 100px;
+    height: 130px;
+  }
+  
+  .image {
+    display: block;
+    width: 45px;
+    height: 60px;
+  }
+  
+  .image-container:hover .image {
+    -moz-transform: scale(2);
+    -webkit-transform: scale(2);
+    transform: scale(2);
+  }
+
+  .image-class {
+    width: 45px;
+    height: 60px;
+  }
+
+  .image-class:hover {
+    width: auto;
+    height: auto;
+  }
