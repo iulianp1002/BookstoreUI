@@ -44,7 +44,7 @@ export class BookService {
   }
 
   public getCompanyLogoBase(pictureNume: string): any {
-    const url = 'https://localhost:7268/Resources/Images/'+pictureNume;
+    const url = `${environment.pictureUrl}`+pictureNume;
 
     return this.http.get(url);
 }
